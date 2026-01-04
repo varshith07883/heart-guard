@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Heart Disease Prediction System</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#4f46e5", secondary: "#10b981" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <!-- ECharts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+
+    <style>
+      :where([class^="ri-"])::before {
+        content: "\f3c2";
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: radial-gradient(circle at top left, #eef2ff 0, #f9fafb 40%, #ecfeff 100%);
+      }
+      .table-container::-webkit-scrollbar {
+        height: 6px;
+      }
+      .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      .table-container::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 8px;
+      }
+      .chip {
+        @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Top navigation -->
+    <header class="bg-white/90 backdrop-blur shadow-sm">
+      <nav class="px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 justify-between">
+          <div class="flex items-center">
+            <a
+              href="{{ url_for('dashboard') }}"
+              class="flex items-center gap-2"
+            >
+              <span
+                class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary"
+              >
+                <i class="ri-heart-pulse-line"></i>
+              </span>
+              <span class="text-2xl font-['Pacifico'] text-primary">
+                HeartGuard
+              </span>
+            </a>
+            <div class="hidden sm:ml-10 sm:flex sm:space-x-8">
+              <a
+                href="{{ url_for('dashboard') }}"
+                class="border-primary text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Dashboard
+              </a>
+              <a
+                href="{{ url_for('predictor') }}"
+                class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Prediction
+              </a>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <span class="hidden sm:inline text-sm text-gray-600">
+              👤 {{ user }}
+            </span>
+            <a
+              href="{{ url_for('logout') }}"
+              class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-button text-sm font-medium whitespace-nowrap flex items-center gap-1"
+            >
+              <i class="ri-logout-box-line"></i>
+              Logout
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <!-- Welcome banner -->
+      <div
+        class="bg-gradient-to-r from-primary/90 via-indigo-500 to-secondary/90 text-white shadow-lg rounded-2xl overflow-hidden"
+      >
+        <div class="p-6 sm:p-7">
+          <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+          >
+            <div>
+              <h1 class="text-2xl sm:text-3xl font-semibold flex items-center gap-2">
+                Welcome, {{ user }} 👋
+              </h1>
+              <p class="mt-2 text-sm sm:text-base text-indigo-100 max-w-2xl">
+                Monitor heart disease risk using AI-powered predictions and intuitive
+                visualizations. Track trends, review past cases, and stay on top of
+                patient health.
+              </p>
+
+              <div class="mt-4 flex flex-wrap gap-2 text-xs sm:text-sm">
+                <span
+                  class="chip bg-white/15 text-white border border-white/20 gap-1"
+                >
+                  <i class="ri-bar-chart-2-line"></i> Live stats
+                </span>
+                <span
+                  class="chip bg-white/15 text-white border border-white/20 gap-1"
+                >
+                  <i class="ri-shield-check-line"></i> Secure session
+                </span>
+                <span
+                  class="chip bg-white/15 text-white border border-white/20 gap-1"
+                >
+                  <i class="ri-cpu-line"></i> ML model enabled
+                </span>
+              </div>
+            </div>
+
+            <div class="flex flex-col items-end gap-3">
+              <a
+                href="{{ url_for('predictor') }}"
+                class="bg-white text-primary hover:bg-indigo-100 px-4 py-2 rounded-button text-sm font-semibold shadow flex items-center gap-2"
+              >
+                <i class="ri-heart-pulse-line"></i>
+                New Prediction
+              </a>
+              {% if stats.total_predictions > 0 %}
+              <p class="text-xs text-indigo-100">
+                Last updated just now •
+                <span class="font-medium"
+                  >{{ stats.total_predictions }} total predictions</span
+                >
+              </p>
+              {% else %}
+              <p class="text-xs text-indigo-100">
+                No predictions yet – start by running your first prediction.
+              </p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats + Last prediction -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Stats cards (3) -->
+        <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            class="bg-white shadow-sm rounded-2xl overflow-hidden border border-indigo-50"
+          >
+            <div class="p-5 flex items-center">
+              <div
+                class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mr-4"
+              >
+                <i class="ri-file-list-3-line text-primary"></i>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-500">
+                  Total Predictions
+                </p>
+                <p class="text-2xl font-semibold text-gray-900">
+                  {{ stats.total_predictions }}
+                </p>
+                <p class="text-xs text-gray-400 mt-1">
+                  All predictions recorded in this session.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white shadow-sm rounded-2xl overflow-hidden border border-red-50"
+          >
+            <div class="p-5 flex items-center">
+              <div
+                class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mr-4"
+              >
+                <i class="ri-alert-line text-red-500"></i>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-500">
+                  High Risk Cases
+                </p>
+                <p class="text-2xl font-semibold text-gray-900">
+                  {{ stats.high_risk }}
+                </p>
+                <p class="text-xs text-red-500 mt-1">
+                  Consider follow-up and clinical tests.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white shadow-sm rounded-2xl overflow-hidden border border-emerald-50"
+          >
+            <div class="p-5 flex items-center">
+              <div
+                class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mr-4"
+              >
+                <i class="ri-shield-check-line text-emerald-600"></i>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-500">
+                  Low Risk Cases
+                </p>
+                <p class="text-2xl font-semibold text-gray-900">
+                  {{ stats.low_risk }}
+                </p>
+                <p class="text-xs text-emerald-500 mt-1">
+                  Continue routine monitoring and lifestyle care.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Last prediction card -->
+        <div
+          class="bg-white shadow-sm rounded-2xl overflow-hidden border border-sky-100"
+        >
+          <div class="p-5 h-full flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-sm font-semibold text-gray-800">
+                Last Prediction
+              </h2>
+              <span
+                class="chip bg-sky-50 text-sky-700 border border-sky-100 gap-1"
+              >
+                <i class="ri-history-line"></i> Recent
+              </span>
+            </div>
+
+            {% if recent_predictions %}
+            {% set last = recent_predictions[0] %}
+            <div class="space-y-1 text-sm text-gray-700">
+              <p>
+                <span class="font-medium">Patient ID:</span>
+                {{ last.id }}
+              </p>
+              <p>
+                <span class="font-medium">Age:</span>
+                {{ last.age }}
+              </p>
+              <p>
+                <span class="font-medium">Sex:</span>
+                {{ 'Male' if last.sex == 1 else 'Female' }}
+              </p>
+              <p>
+                <span class="font-medium">Cholesterol:</span>
+                {{ last.chol }} mg/dL
+              </p>
+              <p>
+                <span class="font-medium">Blood Pressure:</span>
+                {{ last.trestbps }} mmHg
+              </p>
+              <p>
+                <span class="font-medium">Date:</span>
+                {{ last.date }}
+              </p>
+            </div>
+
+            <div class="mt-3">
+              {% if last.result == 1 %}
+              <span
+                class="chip bg-red-50 text-red-700 border border-red-100 gap-1"
+              >
+                <i class="ri-heart-pulse-line"></i> High Risk
+              </span>
+              {% else %}
+              <span
+                class="chip bg-emerald-50 text-emerald-700 border border-emerald-100 gap-1"
+              >
+                <i class="ri-heart-2-line"></i> Low Risk
+              </span>
+              {% endif %}
+            </div>
+            {% else %}
+            <p class="text-xs text-gray-500">
+              No predictions yet. Run a prediction to see a summary here.
+            </p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts + Tips -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Charts (2 cols) -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Legend / filters above charts -->
+          <div
+            class="bg-white rounded-2xl border border-gray-100 shadow-sm px-4 py-3 flex flex-wrap items-center justify-between gap-3"
+          >
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-medium text-gray-700">
+                Data Overview
+              </span>
+              <div class="flex flex-wrap gap-2 text-xs">
+                <span class="chip bg-red-50 text-red-700 border border-red-100">
+                  ● High Risk
+                </span>
+                <span
+                  class="chip bg-emerald-50 text-emerald-700 border border-emerald-100"
+                >
+                  ● Low Risk
+                </span>
+                <span class="chip bg-indigo-50 text-indigo-700 border border-indigo-100">
+                  ● Age Buckets
+                </span>
+              </div>
+            </div>
+            <p class="text-[11px] text-gray-400">
+              Charts update automatically as new predictions are made.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div
+              class="bg-white shadow-sm rounded-2xl overflow-hidden border border-indigo-50"
+            >
+              <div class="p-4 flex justify-between items-center">
+                <h2 class="text-sm font-semibold text-gray-900">
+                  Prediction Summary
+                </h2>
+                <i class="ri-bar-chart-2-line text-primary"></i>
+              </div>
+              <div id="prediction-chart" class="h-64"></div>
+            </div>
+
+            <div
+              class="bg-white shadow-sm rounded-2xl overflow-hidden border border-sky-50"
+            >
+              <div class="p-4 flex justify-between items-center">
+                <h2 class="text-sm font-semibold text-gray-900">
+                  Age Distribution
+                </h2>
+                <i class="ri-line-chart-line text-sky-500"></i>
+              </div>
+              <div id="age-chart" class="h-64"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Health tips / info panel -->
+        <div
+          class="bg-white shadow-sm rounded-2xl overflow-hidden border border-emerald-50 flex flex-col"
+        >
+          <div class="p-5 border-b border-gray-100 flex items-center gap-2">
+            <span
+              class="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600"
+            >
+              <i class="ri-heart-3-line"></i>
+            </span>
+            <div>
+              <h2 class="text-sm font-semibold text-gray-900">
+                Heart Health Tips
+              </h2>
+              <p class="text-[11px] text-gray-500">
+                Simple pointers for patients (not medical advice).
+              </p>
+            </div>
+          </div>
+          <div class="p-5 space-y-3 text-sm text-gray-700 flex-1">
+            <p class="flex gap-2">
+              <span class="text-emerald-500 mt-0.5">
+                <i class="ri-checkbox-circle-line"></i>
+              </span>
+              Encourage regular checkups for patients with high predictions.
+            </p>
+            <p class="flex gap-2">
+              <span class="text-emerald-500 mt-0.5">
+                <i class="ri-checkbox-circle-line"></i>
+              </span>
+              Promote balanced diet, reduced salt intake, and daily movement.
+            </p>
+            <p class="flex gap-2">
+              <span class="text-emerald-500 mt-0.5">
+                <i class="ri-checkbox-circle-line"></i>
+              </span>
+              Track trends over time instead of relying on a single prediction.
+            </p>
+            <p class="text-[11px] text-gray-400 pt-2 border-t border-gray-100">
+              This dashboard is for educational and preliminary risk assessment
+              purposes only and does not replace professional medical diagnosis.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent predictions table + filters -->
+      <div class="bg-white shadow-sm rounded-2xl overflow-hidden border border-gray-100 mb-6">
+        <div class="p-6 border-b border-gray-100">
+          <div class="flex flex-col sm:flex-row justify-between gap-3">
+            <div>
+              <h2 class="text-lg font-semibold text-gray-900">
+                Recent Predictions
+              </h2>
+              <p class="text-xs text-gray-500">
+                Latest patient risk assessments generated by the model.
+              </p>
+            </div>
+
+            <!-- Filter buttons -->
+            <div class="flex flex-wrap gap-2 text-xs">
+              <button
+                type="button"
+                class="chip bg-indigo-50 text-indigo-700 border border-indigo-100"
+                onclick="filterTable('all')"
+              >
+                <i class="ri-list-check"></i> All
+              </button>
+              <button
+                type="button"
+                class="chip bg-red-50 text-red-700 border border-red-100"
+                onclick="filterTable('high')"
+              >
+                <i class="ri-arrow-up-circle-line"></i> High Risk Only
+              </button>
+              <button
+                type="button"
+                class="chip bg-emerald-50 text-emerald-700 border border-emerald-100"
+                onclick="filterTable('low')"
+              >
+                <i class="ri-arrow-down-circle-line"></i> Low Risk Only
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 table-container overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200" id="predictions-table">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Patient
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Date
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Age
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Sex
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Cholesterol
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Blood Pressure
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Result
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              {% if recent_predictions %}
+              {% for p in recent_predictions %}
+              <tr
+                data-risk="{{ 'high' if p.result == 1 else 'low' }}"
+                class="hover:bg-gray-50 transition-colors"
+              >
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ p.name or ('Patient ' ~ p.id) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ p.date }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ p.age }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ 'Male' if p.sex == 1 else 'Female' }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ p.chol }} mg/dL
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ p.trestbps }} mmHg
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  {% if p.result == 1 %}
+                  <span
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"
+                  >
+                    High Risk
+                  </span>
+                  {% else %}
+                  <span
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800"
+                  >
+                    Low Risk
+                  </span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+              {% else %}
+              <tr>
+                <td
+                  colspan="7"
+                  class="px-6 py-4 text-center text-sm text-gray-500"
+                >
+                  No predictions yet. Start by creating a new prediction.
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Values rendered by Jinja
+      const highRisk = {{ stats.high_risk | tojson }};
+      const lowRisk = {{ stats.low_risk | tojson }};
+      const ageBuckets = {{ stats.age_buckets | tojson }};
+
+      const predChart = echarts.init(
+        document.getElementById("prediction-chart")
+      );
+      const ageChart = echarts.init(document.getElementById("age-chart"));
+
+      predChart.setOption({
+        tooltip: { trigger: "axis" },
+        xAxis: { type: "category", data: ["High Risk", "Low Risk"] },
+        yAxis: { type: "value" },
+        grid: { left: "8%", right: "4%", bottom: "8%", top: "10%" },
+        series: [
+          {
+            name: "Count",
+            type: "bar",
+            data: [highRisk, lowRisk],
+            itemStyle: {
+              color: function (params) {
+                return params.dataIndex === 0 ? "#ef4444" : "#10b981";
+              },
+            },
+            barWidth: "40%",
+          },
+        ],
+      });
+
+      ageChart.setOption({
+        tooltip: { trigger: "axis" },
+        xAxis: {
+          type: "category",
+          data: ["<40", "40–50", "50–60", "60+"],
+        },
+        yAxis: { type: "value" },
+        grid: { left: "8%", right: "4%", bottom: "8%", top: "10%" },
+        series: [
+          {
+            data: ageBuckets,
+            type: "line",
+            smooth: true,
+            areaStyle: {
+              opacity: 0.2,
+            },
+            lineStyle: {
+              width: 3,
+            },
+          },
+        ],
+      });
+
+      // Table filter by risk level
+      function filterTable(mode) {
+        const rows = document.querySelectorAll(
+          "#predictions-table tbody tr[data-risk]"
+        );
+        rows.forEach((row) => {
+          const risk = row.getAttribute("data-risk"); // "high" or "low"
+          if (mode === "all") {
+            row.style.display = "";
+          } else if (mode === risk) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Predict Heart Disease - HeartGuard</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#4f46e5",
+              secondary: "#10b981",
+            },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      :where([class^="ri-"])::before {
+        content: "\f3c2";
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: radial-gradient(
+          circle at top,
+          #eef2ff 0,
+          #e5e7eb 40%,
+          #f9fafb 100%
+        );
+        min-height: 100vh;
+      }
+      input:focus,
+      select:focus {
+        outline: none;
+        box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.4);
+        border-color: rgba(79, 70, 229, 1);
+      }
+    </style>
+  </head>
+
+  <body class="flex flex-col min-h-screen">
+    <!-- Top navigation -->
+    <header class="bg-white/80 backdrop-blur shadow-sm sticky top-0 z-30">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 justify-between items-center">
+          <!-- Brand -->
+          <a
+            href="{{ url_for('dashboard') }}"
+            class="flex items-center gap-2 select-none"
+          >
+            <div
+              class="w-8 h-8 flex items-center justify-center rounded-full bg-primary/10 text-primary"
+            >
+              <i class="ri-heart-pulse-line"></i>
+            </div>
+            <span class="font-['Pacifico'] text-xl text-primary">
+              HeartGuard
+            </span>
+          </a>
+
+          <!-- Desktop links -->
+          <div class="hidden md:flex items-center gap-6 text-sm">
+            <a
+              href="{{ url_for('dashboard') }}"
+              class="text-gray-700 hover:text-primary inline-flex items-center gap-1"
+            >
+              <i class="ri-dashboard-line"></i>
+              Dashboard
+            </a>
+            <a
+              href="{{ url_for('predictor') }}"
+              class="text-primary font-semibold inline-flex items-center gap-1 border-b-2 border-primary pb-1"
+            >
+              <i class="ri-pulse-line"></i>
+              Predict Disease
+            </a>
+            <a
+              href="{{ url_for('logout') }}"
+              class="text-gray-700 hover:text-primary inline-flex items-center gap-1"
+            >
+              <i class="ri-logout-box-line"></i>
+              Logout
+            </a>
+          </div>
+
+          <!-- Mobile menu button (no dropdown logic needed for now) -->
+          <div class="md:hidden flex items-center gap-3">
+            <a
+              href="{{ url_for('logout') }}"
+              class="text-gray-700 hover:text-primary inline-flex items-center gap-1 text-sm"
+            >
+              <i class="ri-logout-box-line"></i>
+              Logout
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main content -->
+    <main class="flex-1 flex items-center justify-center px-4 py-10">
+      <div class="w-full max-w-4xl">
+        <!-- Card -->
+        <div
+          class="bg-white/90 backdrop-blur shadow-xl rounded-2xl border border-gray-100 overflow-hidden"
+        >
+          <div
+            class="px-6 sm:px-8 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+          >
+            <div>
+              <h1
+                class="text-2xl font-semibold text-gray-900 flex items-center"
+              >
+                <span
+                  class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-2"
+                >
+                  <i class="ri-pulse-line"></i>
+                </span>
+                Predict Heart Disease
+              </h1>
+              <p class="text-sm text-gray-500 mt-1">
+                Enter patient clinical details to estimate the risk of heart
+                disease.
+              </p>
+            </div>
+            <a
+              href="{{ url_for('dashboard') }}"
+              class="inline-flex items-center text-xs sm:text-sm text-gray-600 hover:text-primary"
+            >
+              <i class="ri-arrow-left-line mr-1"></i>
+              Back to Dashboard
+            </a>
+          </div>
+
+          <div class="px-6 sm:px-8 py-6">
+            <!-- Server-side feedback (optional) -->
+            {% with messages = get_flashed_messages() %} {% if messages %}
+            <div
+              class="mb-4 rounded-lg bg-blue-50 text-blue-700 px-4 py-3 text-sm"
+            >
+              {{ messages[0] }}
+            </div>
+            {% endif %} {% endwith %}
+
+            <form method="post" class="space-y-6">
+              <!-- Grid fields -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {% for field, label in { 'age': 'Age', 'sex': 'Sex (1 = Male, 0
+                = Female)', 'cp': 'Chest Pain Type (0–3)', 'trestbps': 'Resting
+                Blood Pressure (mmHg)', 'chol': 'Cholesterol Level (mg/dL)',
+                'fbs': 'Fasting Blood Sugar (1 = Yes, 0 = No)', 'restecg':
+                'Resting ECG (0–2)', 'thalach': 'Max Heart Rate Achieved',
+                'exang': 'Exercise-Induced Angina (1 = Yes, 0 = No)', 'oldpeak':
+                'ST Depression', 'slope': 'Slope of ST Segment (0–2)', 'ca':
+                'Number of Major Vessels (0–4)', 'thal': 'Thalassemia (0–3)'
+                }.items() %}
+                <div>
+                  <label
+                    for="{{ field }}"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    {{ label }}
+                  </label>
+                  <input type="number" name="{{ field }}" id="{{ field }}"
+                  class="w-full rounded-button border border-gray-300 px-3 py-2
+                  text-sm text-gray-900 bg-white placeholder-gray-400" {% if
+                  field == 'oldpeak' %}step="0.1"{% else %}step="1"{% endif %}
+                  required /> {% if field in ['age','trestbps','chol','thalach']
+                  %}
+                  <p class="mt-1 text-xs text-gray-400">
+                    Please enter a realistic numeric value.
+                  </p>
+                  {% endif %}
+                </div>
+                {% endfor %}
+              </div>
+
+              <!-- Submit -->
+              <div class="pt-2 flex justify-end">
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center px-5 py-2.5 rounded-button text-sm font-medium text-white bg-primary hover:bg-primary/90 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                >
+                  <i class="ri-heart-pulse-line mr-2"></i>
+                  Predict
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Note -->
+        <p class="mt-4 text-xs text-gray-500 text-center max-w-xl mx-auto">
+          This tool uses a machine learning model for educational and
+          preliminary screening purposes only. It is not a substitute for
+          professional medical diagnosis. Always consult a qualified
+          cardiologist for clinical decisions.
+        </p>
+      </div>
+    </main>
+  </body>
+</html>

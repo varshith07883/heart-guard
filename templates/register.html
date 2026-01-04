@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - HeartGuard</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#2563eb", // blue-600
+              secondary: "#0ea5e9", // sky-500
+              accent: "#3b82f6", // blue-500
+            },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "12px",
+              md: "16px",
+              lg: "20px",
+              xl: "24px",
+              "2xl": "28px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        background: radial-gradient(
+          circle at top,
+          #dbeafe 0,
+          #eff6ff 30%,
+          #e0f7ff 55%,
+          #eef2ff 100%
+        );
+        min-height: 100vh;
+        font-family: "Inter", sans-serif;
+      }
+      input:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+      }
+      .toggle-password {
+        cursor: pointer;
+      }
+      .glass-card {
+        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.9);
+      }
+    </style>
+  </head>
+
+  <body class="flex items-center justify-center p-4">
+    <!-- Background decorations -->
+    <div
+      class="pointer-events-none fixed inset-0 overflow-hidden opacity-70"
+      aria-hidden="true"
+    >
+      <div
+        class="absolute -top-20 -left-16 w-72 h-72 rounded-full bg-blue-300/40 blur-3xl"
+      ></div>
+      <div
+        class="absolute -bottom-16 -right-10 w-80 h-80 rounded-full bg-sky-300/40 blur-3xl"
+      ></div>
+      <div
+        class="absolute top-1/3 left-10 w-40 h-40 rounded-full bg-blue-200/40 blur-2xl"
+      ></div>
+      <div
+        class="absolute bottom-10 right-1/4 w-32 h-32 rounded-full bg-indigo-200/40 blur-2xl"
+      ></div>
+    </div>
+
+    <div class="relative w-full max-w-5xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch">
+        <!-- Left: Info panel similar to login -->
+        <div
+          class="hidden md:flex flex-col justify-between rounded-3xl p-7 lg:p-8 bg-gradient-to-br from-primary via-secondary to-accent text-white shadow-2xl relative overflow-hidden"
+        >
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center"
+              >
+                <i class="ri-heart-pulse-line ri-xl"></i>
+              </div>
+              <div>
+                <h1
+                  class="text-2xl lg:text-3xl font-['Pacifico'] tracking-wide"
+                >
+                  HeartGuard
+                </h1>
+                <p class="text-xs lg:text-sm">
+                  Heart Disease Prediction System
+                </p>
+              </div>
+            </div>
+            <span
+              class="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-[11px] uppercase tracking-wider"
+            >
+              <i class="ri-heart-add-line"></i>
+              Create Account
+            </span>
+          </div>
+
+          <div class="mt-2 space-y-4">
+            <h2 class="text-xl lg:text-2xl font-semibold">
+              Create your personal<br />
+              <span class="underline decoration-yellow-300 decoration-2">
+                HeartGuard profile
+              </span>
+            </h2>
+            <p class="text-sm lg:text-[13px] leading-relaxed">
+              Begin assessing heart health, monitoring predictions, and
+              visualizing risk with powerful AI insights.
+            </p>
+
+            <!-- Features -->
+            <div class="mt-4 grid grid-cols-3 gap-3 text-[11px] lg:text-xs">
+              <div class="bg-white/10 p-3 rounded-2xl border border-white/20">
+                <i class="ri-user-add-line text-yellow-200"></i>
+                <h3 class="font-semibold text-white text-sm mt-1">
+                  Quick Setup
+                </h3>
+                <p class="text-blue-100">Instant access to dashboard tools.</p>
+              </div>
+              <div class="bg-white/10 p-3 rounded-2xl border border-white/20">
+                <i class="ri-lock-password-line text-lime-200"></i>
+                <h3 class="font-semibold text-white text-sm mt-1">
+                  Secure Login
+                </h3>
+                <p class="text-blue-100">Fully encrypted authentication.</p>
+              </div>
+              <div class="bg-white/10 p-3 rounded-2xl border border-white/20">
+                <i class="ri-heart-3-line text-blue-200"></i>
+                <h3 class="font-semibold text-white text-sm mt-1">
+                  ML Insights
+                </h3>
+                <p class="text-blue-100">
+                  Prediction model trained on heart data.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 text-sm italic opacity-90">
+            Note: Predictions help estimate risk — always cross-check with a
+            healthcare professional.
+          </div>
+        </div>
+
+        <!-- Right: Registration form -->
+        <div class="relative">
+          <div
+            class="glass-card w-full rounded-3xl shadow-2xl p-7 lg:p-8 border border-white/70"
+          >
+            <div class="text-center mb-6">
+              <div
+                class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 mb-3"
+              >
+                <i class="ri-user-add-line text-primary ri-xl"></i>
+              </div>
+              <h2 class="text-2xl lg:text-3xl font-bold text-gray-900">
+                Create Account
+              </h2>
+              <p class="text-xs lg:text-sm text-gray-500 mt-1">
+                Get started with HeartGuard’s heart health insights.
+              </p>
+            </div>
+
+            <!-- Flash error -->
+            {% with messages = get_flashed_messages(category_filter=['error'])
+            %} {% if messages %}
+            <div
+              class="mb-3 rounded-2xl bg-red-50 text-red-700 border border-red-100 p-3 text-sm flex items-start gap-2"
+            >
+              <i class="ri-error-warning-line mt-0.5"></i>
+              <span>{{ messages[0] }}</span>
+            </div>
+            {% endif %} {% endwith %}
+
+            <form
+              id="registrationForm"
+              class="space-y-5"
+              method="post"
+              action="{{ url_for('register') }}"
+            >
+              <div>
+                <label class="block text-sm font-medium text-gray-700"
+                  >Username</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    class="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-button bg-white/90"
+                    placeholder="Choose a username"
+                    required
+                  />
+                  <i
+                    class="ri-user-line absolute inset-y-0 left-3 top-2.5 text-gray-400"
+                  ></i>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700"
+                  >Password</label
+                >
+                <div class="relative">
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-button bg-white/90"
+                    placeholder="Enter a password"
+                    required
+                  />
+                  <i
+                    class="ri-lock-line absolute inset-y-0 left-3 top-2.5 text-gray-400"
+                  ></i>
+                  <i
+                    class="ri-eye-off-line absolute inset-y-0 right-3 top-2.5 text-gray-400 toggle-password"
+                    data-target="password"
+                  ></i>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700"
+                  >Confirm Password</label
+                >
+                <div class="relative">
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    class="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-button bg-white/90"
+                    placeholder="Re-enter password"
+                    required
+                  />
+                  <i
+                    class="ri-lock-line absolute inset-y-0 left-3 top-2.5 text-gray-400"
+                  ></i>
+                  <i
+                    class="ri-eye-off-line absolute inset-y-0 right-3 top-2.5 text-gray-400 toggle-password"
+                    data-target="confirmPassword"
+                  ></i>
+                </div>
+                <p
+                  id="password-mismatch"
+                  class="text-xs text-red-600 mt-1 hidden"
+                >
+                  Passwords do not match.
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full py-2.5 px-4 bg-gradient-to-r from-primary via-secondary to-accent rounded-button text-white font-semibold shadow hover:opacity-90 transition"
+              >
+                Create Account
+              </button>
+            </form>
+
+            <div class="mt-6 text-center text-sm">
+              <p class="text-gray-600">
+                Already have an account?
+                <a
+                  href="{{ url_for('login') }}"
+                  class="font-semibold text-primary hover:underline"
+                >
+                  Sign in
+                </a>
+              </p>
+              <p class="mt-2 text-xs text-gray-400">
+                Use predictions wisely — they support decisions but are not a
+                replacement for diagnosis.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggles = document.querySelectorAll(".toggle-password");
+        toggles.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const inputId = btn.dataset.target;
+            const input = document.getElementById(inputId);
+            input.type = input.type === "password" ? "text" : "password";
+            btn.classList.toggle("ri-eye-off-line");
+            btn.classList.toggle("ri-eye-line");
+          });
+        });
+
+        const form = document.getElementById("registrationForm");
+        const password = document.getElementById("password");
+        const confirmPassword = document.getElementById("confirmPassword");
+        const mismatch = document.getElementById("password-mismatch");
+
+        form.addEventListener("submit", function (e) {
+          if (password.value !== confirmPassword.value) {
+            e.preventDefault();
+            mismatch.classList.remove("hidden");
+          } else {
+            mismatch.classList.add("hidden");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
